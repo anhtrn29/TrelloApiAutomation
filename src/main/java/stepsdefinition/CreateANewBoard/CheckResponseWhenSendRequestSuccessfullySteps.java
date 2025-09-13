@@ -1,6 +1,14 @@
 package stepsdefinition.CreateANewBoard;
 
+
+import static org.testng.Assert.assertEquals;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.StandardCharsets;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,11 +26,24 @@ public class CheckResponseWhenSendRequestSuccessfullySteps {
 
 	@When("I send request")
 	public void i_send_request() {
-		// Write code here that turns the phrase above into concrete actions
+		String requestBody = "{\"name\":\"Bài tập về nhà\",\r\n"
+				+ "\"defaultList\":true}";
+		System.out.println("abc"+ requestBody);
+		try {
+			HttpRequest request;
+			request = HttpRequest.newBuilder().uri(new URI(url)).POST(BodyPublishers.ofString(requestBody,StandardCharsets.UTF_8)).build();
+			System.out.println("abc"+request);
+			response = HttpClient.newHttpClient().send(request,BodyHandlers.ofString());
+		} catch(Exception e) {
+			System.out.println("Send POST request incorrectly");
+			e.printStackTrace();
+		}
 	}
 
 	@Then("The response returns status code and body")
 	public void the_response_returns_status_code_and_body() {
-		// Write code here that turns the phrase above into concrete actions
+		int actualStatusCode = response.statusCode();
+		System.out.println("abc"+ actualStatusCode);
+		assertEquals(200, actualStatusCode);
 	}
 }
